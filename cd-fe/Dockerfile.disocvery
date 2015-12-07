@@ -1,0 +1,17 @@
+FROM nginx:latest
+MAINTAINER Richard Attermeyer version: 0.1
+
+ENV CONSUL_TEMPLATE_VERSION=0.10.0
+
+# Updata wget to get support for SSL
+RUN apt-get update && apt-get install -y wget && rm -v /etc/nginx/conf.d/default.conf
+
+# Download consul-template
+RUN ( wget --no-check-certificate https://github.com/hashicorp/consul-template/releases/download/v${CONSUL_TEMPLATE_VERSION}/consul-template_${CONSUL_TEMPLATE_VERSION}_linux_amd64.tar.gz -O /tmp/consul_template.tar.gz && gunzip /tmp/consul_template.tar.gz && cd /tmp && tar xf /tmp/consul_template.tar && cd /tmp/consul-template* && mv consul-template /usr/bin && rm -rf /tmp/* )
+
+COPY start.sh /bin/start.sh
+COPY nginx.ctmpl /tmp/nginx.ctmpl
+
+RUN chmod +x /bin/start.sh
+
+ENTRYPOINT ["/bin/start.sh"]

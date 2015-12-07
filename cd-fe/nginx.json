@@ -1,0 +1,5 @@
+template {
+  source = "/tmp/nginx.ctmpl"
+  destination = "/etc/nginx/nginx.cfg"
+  command = "haproxy -f /etc/haproxy/haproxy.cfg -sf $(pidof haproxy) &"
+}
